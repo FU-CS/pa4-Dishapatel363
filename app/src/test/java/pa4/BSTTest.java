@@ -54,4 +54,42 @@ class BSTTest {
         assertEquals(null, bst.root.left.right);
     }
 
+    void testSearch() {
+        BST bst = new BST();
+        bst.insert(5);
+        bst.insert(3);
+        bst.insert(7);
+
+        assertTrue(bst.search(5));
+        assertTrue(bst.search(3));
+        assertTrue(bst.search(7));
+        assertFalse(bst.search(4));
+        assertFalse(bst.search(8));
+    }
+
+    void testUpdate() {
+        BST bst = new BST();
+        bst.insert(5);
+        bst.insert(3);
+        bst.insert(7);
+
+        bst.update(3, 6);
+        assertEquals("5 6 7", bst.inOrder());
+
+        // Update with a value that does not exist
+        bst.update(10, 4);
+        assertEquals("5 6 7", bst.inOrder());
+    }
+
+    void testSortedArrayToBST() {
+        int[] arr = {1, 2, 3, 4, 5, 6, 7};
+        BST.Node root = BST.sortedArrayToBST(arr);
+
+        assertNotNull(root);
+        assertEquals(4, root.value);
+        assertEquals(2, root.left.value);
+        assertEquals(6, root.right.value);
+        assertEquals(1, root.left.left.value);
+        assertEquals(3, root.left.right.value);
+    }
 }
