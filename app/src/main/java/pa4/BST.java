@@ -34,7 +34,28 @@ public class BST {
      * @param value the value of the node to insert
      */
     public void insert(int value) {
-        
+        if (this.root == null) {
+            this.root = new Node(value);
+        } else {
+            this.insertHelper(this.root, value);
+        }
+    }
+
+    private Node insertHelper(Node curr, int value) {
+        if (value <= curr.value) {
+            if (curr.left == null) {
+                curr.left = new Node(value);
+            } else {
+                this.insertHelper(curr.left, value);
+            }
+        } else {
+            if (curr.right == null) {
+                curr.right = new Node(value);
+            } else {
+                this.insertHelper(curr.right, value);
+            }
+        }
+        return curr;
     }
 
 
@@ -43,7 +64,31 @@ public class BST {
      * @param value the value of the node to delete
      */
     public void delete(int value) {
-        
+        this.root = deleteHelper(this.root, value); 
+    }
+
+    private Node deleteHelper(Node curr, int value){
+        if (value < curr.value) {
+            curr.left = this.deleteHelper(curr.left, value);
+        } 
+        else if (value > curr.value) {
+            curr.right = this.deleteHelper(curr.right, value);
+        } 
+        else {
+            if (curr.left == null) {
+                return curr.right;
+            } else if (curr.right == null) {
+                return curr.left;
+            } else {
+                Node smallestNode = curr.right;
+                while (smallestNode.left != null) {
+                    smallestNode = smallestNode.left;
+                }
+                curr.value = smallestNode.value;
+                curr.right = this.deleteHelper(curr.right, smallestNode.value);
+            }
+        }
+        return curr;
     }
 
     /** 
@@ -51,8 +96,21 @@ public class BST {
      * @param value the value to search for
      */
     public boolean search(int value) {
-        
+        return this.searchHelper(this.root, value);
     }
+
+    private boolean searchHelper(Node curr, int value) {
+        if (value == curr.value) {
+            return true;
+        } 
+        else if (value < curr.value) {
+            return this.searchHelper(curr.left, value);
+        } 
+        else {
+            return this.searchHelper(curr.right, value);
+        }
+    }
+
 
     /** 
      * Update a node with a given old value to a new value in the BST.
@@ -60,7 +118,10 @@ public class BST {
      * @param newValue the new value of the node to update
      */
     public void update(int oldValue, int newValue) {
-
+        if (search(oldValue)) {
+            delete(oldValue);
+            insert(newValue);
+        }
     }
 
     /** 
@@ -68,21 +129,54 @@ public class BST {
      * @return the inorder traversal of the BST
      */
     public String inOrder() {
-     
+        return this.inOrderHelper(this.root);
     }
+
+    private String inOrderHelper(Node curr) {
+        if (curr == null) {
+            return "";
+        }
+
+        String left = this.inOrderHelper(curr.left);
+        String right = this.inOrderHelper(curr.right);
+        return (left) + curr.value + " " + (right);
+        }
 
     /** 
      * Convert a sorted array to a balanced BST.
      */
     public static Node sortedArrayToBST(int[] arr) {
-        
+        return sortedArrayHelper(arr, 0, arr.length - 1);
     }
+
+    private static Node sortedArrayHelper(int[] arr, int start, int end) {
+        if (start > end) {
+            return null;
+        }
+
+        int mid = start + (end - start) / 2;
+        Node newNode = new Node(arr[mid]);
+        newNode.left = sortedArrayHelper(arr, start, mid - 1);
+        newNode.right = sortedArrayHelper(arr, mid + 1, end);
+        return newNode;
+    }
+
 
     /** 
      * Find the lowest common ancestor of two nodes with given values in the BST.
      */
     public Node lowestCommonAncestor(int value1, int value2) {
-        
+        return this.lcaHelper(this.root, value1, value2);
+    }
+
+    private Node lcaHelper(Node curr, int value1, int value2) {
+        if (value1 < curr.value && value2 < curr.value) {
+            return this.lcaHelper(curr.left, value1, value2);
+        }
+        if (value1 > curr.value && value2 > curr.value) {
+            return this.lcaHelper(curr.right, value1, value2);
+        }
+        return curr;
     }
 
     public static void main(String[] args) {
